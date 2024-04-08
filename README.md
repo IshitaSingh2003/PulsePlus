@@ -23,6 +23,7 @@ PulsePlus records the time taken to load each site, providing detailed insights 
 ## Technology and Concepts 🚀
 
 - **Python**: The core language driving the functionality.
+- **SQL**: Used for data storage, retrieval, and analysis.
 - **DNS resolution**: Efficiently resolves domain names for accurate measurements.
 - **TCP/UDP sockets**: Employs socket programming for seamless data transmission.
 - **Network latency analysis**: In-depth analysis to identify and rectify latency issues.
