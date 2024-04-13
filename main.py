@@ -2,13 +2,20 @@ import tkinter as tk
 import socket
 import time
 import statistics
-import pandas as pd  # Import pandas for working with Excel.
+import pandas as pd
+import sqlite3
+
+# Connect to the SQLite database
+conn = sqlite3.connect('latency.db')
+c = conn.cursor()
+
+# Create the latency table if it doesn't exist
+c.execute('''CREATE TABLE IF NOT EXISTS latency (timestamp TEXT, target TEXT, latency REAL)''')
 
 # Define the target IP addresses or domain names to monitor.
 target_addresses = ["google.com", "facebook.com", 
                     "whatsapp.com", "github.com",  "chat.openai.com",
                     "huggingface.co", "youtube.com", "vitbhopal.ac.in"]
-
 
 # Define the port you want to monitor (e.g., HTTP on port 80).
 port = 80
@@ -71,10 +78,16 @@ while True:
                 alert_message = f"Latency to {target} is decreasing. Switch network connection!"
                 show_popup_alert(alert_message)
 
-        # Record the timestamp and latency data in the DataFrame.
+        # Record the timestamp and latency data in the DataFrame and the SQL table.
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         row_data = [timestamp] + list(latency_values.values())
         latency_data.loc[len(latency_data)] = row_data
+
+        # Insert the data into the SQL table
+        for target, latency in latency_values.items():
+            c.execute("INSERT INTO latency (timestamp, target, latency) VALUES (?, ?, ?)", (timestamp, target, latency))
+
+        conn.commit()
 
         previous_latency = latency_values
 
